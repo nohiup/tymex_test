@@ -13,8 +13,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity{
     private Spinner apiSourceS, currencyFromS, currencyToS;
@@ -124,7 +127,11 @@ public class MainActivity extends AppCompatActivity{
         public void onDataFetched(Double rate) {
             disableProgressBar();
             Log.d("Data test", rate.toString());
-            valueTV.setText(calculateValue(rate).toString());
+
+            DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.US);
+            DecimalFormat df = new DecimalFormat("#.###", sym);
+
+            valueTV.setText(df.format(calculateValue(rate)));
         }
 
         @Override
@@ -216,10 +223,13 @@ public class MainActivity extends AppCompatActivity{
                 currencyFromS.setSelection(toPos);
                 currencyToS.setSelection(fromPos);
 
-                String amountText = amountET.getText().toString();
+                Double amountDb = Double.parseDouble(amountET.getText().toString());
+                DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.US);
+                DecimalFormat df = new DecimalFormat("#.###", sym);
 
-                amountET.setText(valueTV.getText());
-                valueTV.setText(amountText);
+                amountET.setText(df.format(Double.parseDouble(valueTV.getText().toString())));
+
+                valueTV.setText(df.format(amountDb));
             }
         }
     };
